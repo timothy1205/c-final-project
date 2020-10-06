@@ -13,6 +13,7 @@ struct Ball {
 
 typedef struct Ball ball_t;
 
+// Make available in other files
 extern list_t* p_balls;
 extern list_t* p_blocks;
 
