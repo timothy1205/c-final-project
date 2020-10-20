@@ -18,8 +18,7 @@ int main() {
             if (event.type == sfEvtClosed)
                 sfRenderWindow_close(window);
             else if (event.type == sfEvtResized) {
-                sfView_setSize((sfView*) view, (sfVector2f){(float) event.size.width, (float) event.size.height});
-                sfRenderWindow_setView(window, view);
+                // TODO: Is this even needed?
             }
         }
 
