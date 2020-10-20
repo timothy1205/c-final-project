@@ -10,11 +10,6 @@ int main() {
     sfRenderWindow* window = sfRenderWindow_create((sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT}, "c-final-project",  sfDefaultStyle, NULL);
     const sfView* view = sfRenderWindow_getDefaultView(window);
 
-    sfView_setSize((sfView*) view, (sfVector2f){WIDTH, HEIGHT});
-    sfVector2u size = sfRenderWindow_getSize(window);
-    sfView_setCenter((sfView*) view, (sfVector2f){(float) size.x/2.0f, (float) size.y/2.0f});
-    sfRenderWindow_setView(window, view);
-
     p_initialize();
 
     while(sfRenderWindow_isOpen(window)) {
