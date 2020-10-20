@@ -46,3 +46,34 @@ void p_ball_destroy(ball_t* ball) {
     if (node) u_list_remove(p_balls, node);
 }
 
+/*
+ *  Create and return block
+ */
+
+block_t* p_block_create(float angle, sfVector2f size,  sfVector2f pos, sfColor col) {
+    block_t* block = (block_t*) malloc(sizeof(block_t));
+    if (!block) {
+        u_allocate_failure();
+        return NULL;
+    }
+
+    block->rectangleShape = sfRectangleShape_create();
+    sfRectangleShape_setOrigin(block->rectangleShape, (sfVector2f){size.x / 2, size.y / 2});
+    sfRectangleShape_setRotation(block->rectangleShape, angle);
+    sfRectangleShape_setSize(block->rectangleShape, size);
+    sfRectangleShape_setPosition(block->rectangleShape, pos);
+    sfRectangleShape_setFillColor(block->rectangleShape, col);
+
+    u_list_add(p_blocks, block);
+
+    return block;
+}
+
+/*
+ * Destroy a block
+ */
+
+void p_block_destroy(block_t* block) {
+    node_t* node = u_list_find(p_blocks, block);
+    if (node) u_list_remove(p_balls, node);
+}
