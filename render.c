@@ -25,8 +25,6 @@ void r_render_blocks(sfRenderWindow* window) {
 
     while(node) {
         block_t* block = (block_t*) node->val;
-        sfVector2f pos = sfRectangleShape_getPosition(block->rectangleShape);
-        sfVector2f o = sfRectangleShape_getOrigin(block->rectangleShape);
         sfRenderWindow_drawRectangleShape(window, block->rectangleShape, NULL);
         node = node->next;
     }
