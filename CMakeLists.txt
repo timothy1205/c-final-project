@@ -3,7 +3,7 @@ project(c-final-project C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(${CMAKE_PROJECT_NAME} main.c physics.c physics.h utils.c utils.h render.c render.h)
+add_executable(${CMAKE_PROJECT_NAME} main.c physics.c physics.h utils.c utils.h render.c render.h constants.h)
 
 if (WIN32)
         include_directories(${SFML_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")

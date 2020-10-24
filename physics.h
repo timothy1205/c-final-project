@@ -12,6 +12,7 @@ static float p_time_multiplier = 10.f;
 struct Ball {
   sfCircleShape* circleShape;
   sfVector2f vel;
+  float energyConserved; // 0 - 1
 };
 
 struct Block {
@@ -27,8 +28,9 @@ extern list_t* p_blocks;
 void p_initialize(void);
 void p_update(float* delta);
 
-ball_t* p_ball_create(float radius, sfVector2f pos, sfVector2f vel, sfColor col);
+ball_t* p_ball_create(float radius, sfVector2f pos, sfVector2f vel, float energyConserved, sfColor col);
 void p_ball_destroy(ball_t* ball);
+void p_ball_bounce(ball_t* ball, sfVector2f direction);
 
 block_t* p_block_create(float angle, sfVector2f size, sfVector2f pos, sfColor col);
 void p_block_destroy(block_t* block);

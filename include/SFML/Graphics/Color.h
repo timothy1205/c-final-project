@@ -54,7 +54,6 @@ CSFML_GRAPHICS_API sfColor sfMagenta;     ///< Magenta predefined color
 CSFML_GRAPHICS_API sfColor sfCyan;        ///< Cyan predefined color
 CSFML_GRAPHICS_API sfColor sfTransparent; ///< Transparent (black) predefined color
 
-
 ////////////////////////////////////////////////////////////
 /// \brief Construct a color from its 3 RGB components
 ///

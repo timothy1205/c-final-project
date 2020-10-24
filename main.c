@@ -1,17 +1,16 @@
 #include <stdio.h>
 #include <SFML/Graphics.h>
+#include "constants.h"
 #include "physics.h"
 #include "render.h"
-
-#define WIDTH 1920.0f
-#define HEIGHT 1080.0f
 
 int main() {
     sfRenderWindow* window = sfRenderWindow_create((sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT}, "c-final-project",  sfDefaultStyle, NULL);
     const sfView* view = sfRenderWindow_getDefaultView(window);
 
     p_initialize();
-    p_ball_create(10.f, (sfVector2f) {0.f, 0.f}, (sfVector2f) {50.f, 0.f}, sfRed);
+    p_ball_create(10.f, (sfVector2f) {50.f, 500.f}, (sfVector2f) {50.f, -50.f}, 0.75f, sfRed);
+    p_ball_create(10.f, (sfVector2f) {10.f, 500.f}, (sfVector2f) {50.f, -50.f}, 1.f, sfBlue);
 
     sfClock* clock = sfClock_create();
     while(sfRenderWindow_isOpen(window)) {
