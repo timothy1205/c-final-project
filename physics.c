@@ -19,7 +19,7 @@ void p_initialize(void) {
  * Intentionally not in header file
  */
 
-void p_check_borders(float* delta, ball_t* ball) {
+void p_check_borders(ball_t* ball) {
     sfVector2f pos = sfCircleShape_getPosition(ball->circleShape);
     float radius = sfCircleShape_getRadius(ball->circleShape);
 
@@ -79,7 +79,7 @@ void p_update_balls(float* delta) {
     while(node) {
         ball_t* ball = (ball_t*) node->val;
 
-        p_check_borders(delta, ball);
+        p_check_borders(ball);
         p_check_ball_collisions(ball);
 
         sfCircleShape_move(ball->circleShape, u_vector2f_float_mult(ball->vel, *delta));
