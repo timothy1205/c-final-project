@@ -21,29 +21,29 @@ void p_initialize(void) {
 
 void p_check_borders(float* delta, ball_t* ball) {
     sfVector2f pos = sfCircleShape_getPosition(ball->circleShape);
-    float diameter = sfCircleShape_getRadius(ball->circleShape) * 2;
+    float radius = sfCircleShape_getRadius(ball->circleShape);
 
-    if (pos.x < 0) {
+    if (pos.x - radius < 0) {
         // Left
         p_ball_bounce(ball, (sfVector2f) {-1, 0});
-        pos.x = 0;
+        pos.x = radius;
         sfCircleShape_setPosition(ball->circleShape, pos);
-    } else if (pos.x + diameter > WIDTH) {
+    } else if (pos.x + radius > WIDTH) {
         // Right
         p_ball_bounce(ball, (sfVector2f) {-1, 0});
-        pos.x = WIDTH - diameter;
+        pos.x = WIDTH - radius;
         sfCircleShape_setPosition(ball->circleShape, pos);
     }
 
-    if (pos.y < 0) {
+    if (pos.y - radius < 0) {
         // Top
         p_ball_bounce(ball, (sfVector2f) {0, -1});
-        pos.y = 0;
+        pos.y = radius;
         sfCircleShape_setPosition(ball->circleShape, pos);
-    } else if (pos.y + diameter > HEIGHT) {
+    } else if (pos.y + radius > HEIGHT) {
         // Bottom
         p_ball_bounce(ball, (sfVector2f) {0, -1});
-        pos.y = HEIGHT - diameter;
+        pos.y = HEIGHT - radius;
         sfCircleShape_setPosition(ball->circleShape, pos);
     }
 }
@@ -113,6 +113,7 @@ ball_t* p_ball_create(float radius, sfVector2f pos, sfVector2f vel, float energy
 
     // Create circle shape from sfml
     ball->circleShape = sfCircleShape_create();
+    sfCircleShape_setOrigin(ball->circleShape, (sfVector2f) {radius, radius});
     sfCircleShape_setRadius(ball->circleShape, radius);
     sfCircleShape_setPosition(ball->circleShape, pos);
     sfCircleShape_setFillColor(ball->circleShape, col);
