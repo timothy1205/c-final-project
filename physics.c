@@ -73,7 +73,7 @@ void p_check_ball_collisions(ball_t* ball) {
  * Intentionally not in header file
  */
 
-void p_update_balls(float* delta) {
+void p_update_balls(const float* delta) {
     node_t* node = p_balls->head;
 
     while(node) {
