@@ -14,6 +14,32 @@ void p_initialize(void) {
 }
 
 /*
+ * Update all balls
+ * Intentionally not in header file
+ */
+
+void p_update_balls(float* delta) {
+    node_t* node = p_balls->head;
+
+    while(node) {
+        ball_t* ball = (ball_t*) node->val;
+        
+        sfCircleShape_move(ball->circleShape, u_vector2f_float_mult(ball->vel, *delta));
+        ball->vel = u_vector2f_add(ball->vel, u_vector2f_float_mult(gravity, *delta));
+
+        node = node->next;
+    }
+}
+
+/*
+ * Update world
+ */
+
+void p_update(float* delta) {
+    p_update_balls(delta);
+}
+
+/*
  * Create and return a ball
  */
 

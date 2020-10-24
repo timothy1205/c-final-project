@@ -11,8 +11,13 @@ int main() {
     const sfView* view = sfRenderWindow_getDefaultView(window);
 
     p_initialize();
+    p_ball_create(10.f, (sfVector2f) {0.f, 0.f}, (sfVector2f) {50.f, 0.f}, sfRed);
 
+    sfClock* clock = sfClock_create();
     while(sfRenderWindow_isOpen(window)) {
+        sfTime delta = sfClock_restart(clock);
+        float deltaSeconds = sfTime_asSeconds(delta) * p_time_multiplier;
+
         sfEvent event;
         while (sfRenderWindow_pollEvent(window, &event)) {
             if (event.type == sfEvtClosed)
@@ -23,6 +28,7 @@ int main() {
         }
 
         sfRenderWindow_clear(window, sfBlack);
+        p_update(&deltaSeconds);
         r_render(window);
         sfRenderWindow_display(window);
     }

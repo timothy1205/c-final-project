@@ -13,6 +13,6 @@ if (WIN32)
         target_link_libraries(${CMAKE_PROJECT_NAME} Lib)
 else()
     find_package(SFML 2.5 REQUIRED system window graphics network audio)
-    target_link_libraries(${CMAKE_PROJECT_NAME} csfml-graphics)
+    target_link_libraries(${CMAKE_PROJECT_NAME} csfml-graphics csfml-system)
 endif()
 

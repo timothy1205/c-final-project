@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <SFML/Graphics.h>
 
 typedef struct node {
     struct node* prev;
@@ -28,5 +29,8 @@ node_t* u_list_find(list_t* list, void* val);
 
 node_t* u_node_create(void* val);
 void u_node_destroy(node_t* node);
+
+sfVector2f u_vector2f_add(sfVector2f vector1, sfVector2f vector2);
+sfVector2f u_vector2f_float_mult(sfVector2f vector, float multiplier);
 
 #endif //C_FINAL_PROJECT_UTILS_H

@@ -6,6 +6,9 @@
 #include <SFML/Graphics.h>
 #include "utils.h"
 
+static sfVector2f gravity = {.0f, 9.8f};
+static float p_time_multiplier = 10.f;
+
 struct Ball {
   sfCircleShape* circleShape;
   sfVector2f vel;
@@ -14,15 +17,15 @@ struct Ball {
 struct Block {
     sfRectangleShape* rectangleShape;
 };
-
 typedef struct Ball ball_t;
-typedef struct Block block_t;
 
+typedef struct Block block_t;
 // Make available in other files
 extern list_t* p_balls;
 extern list_t* p_blocks;
 
 void p_initialize(void);
+void p_update(float* delta);
 
 ball_t* p_ball_create(float radius, sfVector2f pos, sfVector2f vel, sfColor col);
 void p_ball_destroy(ball_t* ball);

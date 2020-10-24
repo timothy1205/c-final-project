@@ -121,3 +121,26 @@ void u_node_destroy(node_t* node) {
     free(node->val);
     free(node);
 }
+
+/*
+ * Add two vectors, updating and returning the first
+ */
+
+sfVector2f u_vector2f_add(sfVector2f vector1, sfVector2f vector2) {
+    vector1.x += vector2.x;
+    vector1.y += vector2.y;
+
+    return vector1;
+}
+
+/*
+ * Apply a multiplier to a vector, updating vector and returning
+ */
+
+sfVector2f u_vector2f_float_mult(sfVector2f vector, float multiplier) {
+//    printf("%.1lf\n", multiplier);
+    vector.x *= multiplier;
+    vector.y *= multiplier;
+
+    return vector;
+}
