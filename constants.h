@@ -7,5 +7,6 @@
 
 #define WIDTH 1920.0f
 #define HEIGHT 1080.0f
+#define MIN_BOUNCE_VEL 5.f
 
 #endif //C_FINAL_PROJECT_CONSTANTS_H

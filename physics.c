@@ -1,5 +1,6 @@
 #include "physics.h"
 #include "constants.h"
+#include "math.h"
 
 // Declare linked list pointers
 list_t* p_balls = NULL;
@@ -42,7 +43,13 @@ void p_check_borders(ball_t* ball) {
         sfCircleShape_setPosition(ball->circleShape, pos);
     } else if (pos.y + radius > HEIGHT) {
         // Bottom
-        p_ball_bounce(ball, (sfVector2f) {0, -1});
+        if (fabsf(ball->vel.y) < MIN_BOUNCE_VEL) {
+            // Only bounce if velocity >= MIN_BOUNCE_VEL
+            // otherwise
+            ball->vel.y = 0.f;
+        } else {
+            p_ball_bounce(ball, (sfVector2f) {0, -1});
+        }
         pos.y = HEIGHT - radius;
         sfCircleShape_setPosition(ball->circleShape, pos);
     }
