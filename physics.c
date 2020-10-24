@@ -49,6 +49,26 @@ void p_check_borders(float* delta, ball_t* ball) {
 }
 
 /*
+ * Check for collisions between balls
+ * Intentionally not in header file
+ */
+
+void p_check_ball_collisions(ball_t* ball) {
+    node_t* node = p_balls->head;
+
+    while(node) {
+        ball_t* ball2 = (ball_t*) node->val;
+
+        if (ball != ball2) {
+            // Different balls
+
+        }
+        node = node->next;
+    }
+
+}
+
+/*
  * Update all balls
  * Intentionally not in header file
  */
@@ -60,6 +80,7 @@ void p_update_balls(float* delta) {
         ball_t* ball = (ball_t*) node->val;
 
         p_check_borders(delta, ball);
+        p_check_ball_collisions(ball);
 
         sfCircleShape_move(ball->circleShape, u_vector2f_float_mult(ball->vel, *delta));
         ball->vel = u_vector2f_add(ball->vel, u_vector2f_float_mult(gravity, *delta));
