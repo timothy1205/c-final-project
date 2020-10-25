@@ -1,7 +1,17 @@
 #include "utils.h"
 
 void u_allocate_failure(void) {
-    fprintf(stderr, "Failed to allocate space\n");
+    fprintf(stderr, "Failed to allocate space, quitting...\n");
+    u_free_resources();
+    exit(1);
+}
+
+/*
+ * Failed to load resources
+ */
+
+void u_resource_failure(void) {
+    fprintf(stderr, "Failed to load resources, quitting...\n");
     u_free_resources();
     exit(1);
 }

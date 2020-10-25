@@ -19,6 +19,7 @@ typedef struct list {
 
 
 void u_allocate_failure(void);
+void u_resource_failure(void);
 void u_free_resources(void);
 
 list_t* u_list_create(void);

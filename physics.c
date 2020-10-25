@@ -68,7 +68,23 @@ void p_check_ball_collisions(ball_t* ball) {
 
         if (ball != ball2) {
             // Different balls
+            float radius = sfCircleShape_getRadius(ball->circleShape);
+            float radius2 = sfCircleShape_getRadius(ball2->circleShape);
+            float distSquared = p_ball_dist_squared(ball, ball2);
 
+            if (distSquared < (radius + radius2) * (radius + radius2)) {
+                sfVector2f pos = sfCircleShape_getPosition(ball->circleShape);
+                sfVector2f pos2 = sfCircleShape_getPosition(ball2->circleShape);
+                // Collision
+
+                // Angle between circles
+                float angle = atan2f(pos2.y - pos.y, pos2.x - pos.x);
+                float angle_flipped = angle + (float) M_PI;
+//                printf("%.3lf\n", angle);
+                float moveDist = (radius + radius2 - sqrtf(distSquared)) / 2;
+
+//                sfCircleShape_move(ball, (sfVector2f) {cosf(angle)})
+            }
         }
         node = node->next;
     }
@@ -148,6 +164,17 @@ void p_ball_bounce(ball_t* ball, sfVector2f direction) {
         ball->vel.x *= direction.x * ball->energyConserved;
     if (direction.y != 0)
         ball->vel.y *= direction.y * ball->energyConserved;
+}
+
+/*
+ * Return the distance squared between two balls
+ */
+
+float p_ball_dist_squared(ball_t* ball, ball_t* ball2) {
+    sfVector2f pos = sfCircleShape_getPosition(ball->circleShape);
+    sfVector2f pos2 = sfCircleShape_getPosition(ball2->circleShape);
+
+    return (pos2.x - pos.x) * (pos2.x - pos.x) + (pos2.y - pos.y) * (pos2.y - pos.y);
 }
 
 /*
