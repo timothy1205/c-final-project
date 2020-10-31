@@ -13,7 +13,6 @@ int main() {
     }
 
     sfRenderWindow* window = sfRenderWindow_create((sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT}, "c-final-project",  sfDefaultStyle, NULL);
-    const sfView* view = sfRenderWindow_getDefaultView(window);
 
     p_initialize();
     p_ball_create(10.f, (sfVector2f) {50.f, 500.f}, (sfVector2f) {50.f, -50.f}, 0.75f, sfRed);
