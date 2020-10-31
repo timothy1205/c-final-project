@@ -79,11 +79,13 @@ void p_check_ball_collisions(ball_t* ball) {
 
                 // Angle between circles
                 float angle = atan2f(pos2.y - pos.y, pos2.x - pos.x);
-                float angle_flipped = angle + (float) M_PI;
-//                printf("%.3lf\n", angle);
+                float angle_flipped = fmodf(angle + (float) M_PI, (float) M_PI);
                 float moveDist = (radius + radius2 - sqrtf(distSquared)) / 2;
 
-//                sfCircleShape_move(ball, (sfVector2f) {cosf(angle)})
+                sfCircleShape_move(ball->circleShape, (sfVector2f) {moveDist * cosf(angle_flipped), moveDist * sinf(angle_flipped)});
+                sfCircleShape_move(ball2->circleShape, (sfVector2f) {moveDist * cosf(angle), moveDist * sinf(angle)});
+                p_ball_bounce(ball, (sfVector2f) {cosf(angle), sinf(angle)});
+                p_ball_bounce(ball2, (sfVector2f) {cosf(angle), sinf(angle)});
             }
         }
         node = node->next;
