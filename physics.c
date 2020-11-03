@@ -70,7 +70,7 @@ void p_check_ball_collisions(ball_t* ball) {
             // Different balls
             float radius = sfCircleShape_getRadius(ball->circleShape);
             float radius2 = sfCircleShape_getRadius(ball2->circleShape);
-            float distSquared = p_ball_dist_squared(ball, ball2);
+            float distSquared = p_distance_squared_ball(ball, ball2);
 
             if (distSquared < (radius + radius2) * (radius + radius2)) {
                 sfVector2f pos = sfCircleShape_getPosition(ball->circleShape);
@@ -228,17 +228,6 @@ void p_ball_bounce(ball_t* ball, sfVector2f direction) {
 }
 
 /*
- * Return the distance squared between two balls
- */
-
-float p_ball_dist_squared(ball_t* ball, ball_t* ball2) {
-    sfVector2f pos = sfCircleShape_getPosition(ball->circleShape);
-    sfVector2f pos2 = sfCircleShape_getPosition(ball2->circleShape);
-
-    return (pos2.x - pos.x) * (pos2.x - pos.x) + (pos2.y - pos.y) * (pos2.y - pos.y);
-}
-
-/*
  *  Create and return block
  */
 
@@ -268,6 +257,15 @@ block_t* p_block_create(float angle, sfVector2f size,  sfVector2f pos, sfColor c
 void p_block_destroy(block_t* block) {
     node_t* node = u_list_find(p_blocks, block);
     if (node) u_list_remove(p_balls, node);
+}
+
+/*
+ * Wrapper function to return distance between two balls
+ */
+
+float p_distance_squared_ball(ball_t* ball, ball_t* ball2) {
+    return u_distance_squared(sfCircleShape_getPosition(ball->circleShape),
+                              sfCircleShape_getPosition(ball2->circleShape));;
 }
 
 /*
