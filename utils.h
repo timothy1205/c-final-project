@@ -34,4 +34,8 @@ void u_node_destroy(node_t* node);
 sfVector2f u_vector2f_add(sfVector2f vector1, sfVector2f vector2);
 sfVector2f u_vector2f_float_mult(sfVector2f vector, float multiplier);
 
+float u_degrees_to_rad(float deg);
+
+float u_distance_squared(sfVector2f from, sfVector2f to);
+
 #endif //C_FINAL_PROJECT_UTILS_H

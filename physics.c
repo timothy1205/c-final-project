@@ -94,6 +94,64 @@ void p_check_ball_collisions(ball_t* ball) {
 }
 
 /*
+ * Check for collisions between balls and blocks
+ * Intentionally not in header file
+ */
+
+void p_check_block_collisions(ball_t* ball) {
+    sfVector2f blockPos;
+    sfVector2f blockSize;
+    float blockAngle;
+
+    sfVector2f circlePos;
+    float circleRadius;
+    sfVector2f unrotatedCirclePos;
+    sfVector2f closestPos;
+
+    node_t* node = p_blocks->head;
+
+    while(node) {
+        block_t* block = (block_t*) node->val;
+        blockPos = sfRectangleShape_getPosition(block->rectangleShape);
+        blockSize = sfRectangleShape_getSize(block->rectangleShape);
+        blockAngle = u_degrees_to_rad(sfRectangleShape_getRotation(block->rectangleShape));
+
+        circlePos = sfCircleShape_getPosition(ball->circleShape);
+        circleRadius = sfCircleShape_getRadius(ball->circleShape);
+
+        // http://www.migapro.com/circle-and-rotated-rectangle-collision-detection/
+        // Circle rotated around block's center by block's angle
+        unrotatedCirclePos.x = cosf(blockAngle) * (circlePos.x - blockPos.x) -
+                sinf(blockAngle) * (circlePos.y - blockPos.y) + blockPos.x;
+        unrotatedCirclePos.y = sinf(blockAngle) * (circlePos.x - blockPos.x) -
+                cosf(blockAngle) * (circlePos.y - blockPos.y) + blockPos.y;
+
+        // Calculate point on block closest to ball
+        if (unrotatedCirclePos.x < blockPos.x)
+            closestPos.x = blockPos.x;
+        else if (unrotatedCirclePos.x > blockPos.x + blockSize.x)
+            closestPos.x = blockPos.x + blockSize.x;
+        else
+            closestPos.x = unrotatedCirclePos.x;
+
+        if (unrotatedCirclePos.y < blockPos.y)
+            closestPos.y = blockPos.y;
+        else if (unrotatedCirclePos.y > blockPos.y + blockSize.y)
+            closestPos.y = blockPos.y + blockSize.y;
+        else
+            closestPos.y = unrotatedCirclePos.y;
+
+        if (p_distance_squared_ball_block(ball, block) < circleRadius * circleRadius) {
+            // Collision
+            // TODO: Bounce ball based on rectangle angle/collision side. Probably use closestPos to determine side.
+        }
+
+        node = node->next;
+    }
+
+}
+
+/*
  * Update all balls
  * Intentionally not in header file
  */
@@ -106,6 +164,7 @@ void p_update_balls(const float* delta) {
 
         p_check_borders(ball);
         p_check_ball_collisions(ball);
+        p_check_block_collisions(ball);
 
         sfCircleShape_move(ball->circleShape, u_vector2f_float_mult(ball->vel, *delta));
         ball->vel = u_vector2f_add(ball->vel, u_vector2f_float_mult(gravity, *delta));
@@ -209,4 +268,13 @@ block_t* p_block_create(float angle, sfVector2f size,  sfVector2f pos, sfColor c
 void p_block_destroy(block_t* block) {
     node_t* node = u_list_find(p_blocks, block);
     if (node) u_list_remove(p_balls, node);
+}
+
+/*
+ * Wrapper function to return distance between a ball and block
+ */
+
+float p_distance_squared_ball_block(ball_t* ball, block_t* block) {
+    return u_distance_squared(sfCircleShape_getPosition(ball->circleShape),
+                              sfRectangleShape_getPosition(block->rectangleShape));
 }

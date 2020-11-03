@@ -17,6 +17,7 @@ int main() {
     p_initialize();
     p_ball_create(10.f, (sfVector2f) {50.f, 500.f}, (sfVector2f) {50.f, -50.f}, 0.75f, sfRed);
     p_ball_create(10.f, (sfVector2f) {10.f, 500.f}, (sfVector2f) {50.f, -50.f}, 1.f, sfBlue);
+    p_block_create(45.f, (sfVector2f) {50.f, 50.f}, (sfVector2f) {520.f, 500.f}, sfGreen);
 
     sfClock* clock = sfClock_create();
     sfText* fps = sfText_create();

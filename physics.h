@@ -36,4 +36,6 @@ float p_ball_dist_squared(ball_t* ball, ball_t* ball2);
 block_t* p_block_create(float angle, sfVector2f size, sfVector2f pos, sfColor col);
 void p_block_destroy(block_t* block);
 
+float p_distance_squared_ball_block(ball_t* ball, block_t* block);
+
 #endif //C_FINAL_PROJECT_PHYSICS_H

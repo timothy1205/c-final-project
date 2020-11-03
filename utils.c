@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "math.h"
 
 void u_allocate_failure(void) {
     fprintf(stderr, "Failed to allocate space, quitting...\n");
@@ -153,4 +154,23 @@ sfVector2f u_vector2f_float_mult(sfVector2f vector, float multiplier) {
     vector.y *= multiplier;
 
     return vector;
+}
+
+/*
+ * Convert degrees to radians
+ */
+
+float u_degrees_to_rad(float deg) {
+    return deg * ((float) M_PI / 180.f);
+}
+
+/*
+ * Return distance between two points
+ */
+
+float u_distance_squared(sfVector2f from, sfVector2f to) {
+    float x = fabsf(from.x - to.x);
+    float y = fabsf(from.y - to.y);
+
+    return (x * x) + (y * y);
 }
