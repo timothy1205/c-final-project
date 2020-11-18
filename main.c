@@ -136,4 +136,3 @@ void HandleInput(sfRenderWindow* window, sfEvent event) {
         }
     }
 
-}
