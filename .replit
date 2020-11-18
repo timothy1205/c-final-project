@@ -1,0 +1,2 @@
+language = "c"
+run = "rm -f main ; g++ -o main main.c ; ./main"
