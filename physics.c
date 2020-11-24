@@ -5,7 +5,6 @@
 // Declare linked list pointers
 list_t* p_balls = NULL;
 list_t* p_blocks = NULL;
-
 /*
  * Initialize physics portion of program
  */
@@ -100,6 +99,7 @@ void p_check_ball_collisions(ball_t* ball) {
 
 void p_check_block_collisions(ball_t* ball) {
     sfVector2f blockPos;
+    sfVector2f blockPosTopLeftOrigin;
     sfVector2f blockSize;
     float blockAngle;
 
@@ -114,7 +114,10 @@ void p_check_block_collisions(ball_t* ball) {
         block_t* block = (block_t*) node->val;
         blockPos = sfRectangleShape_getPosition(block->rectangleShape);
         blockSize = sfRectangleShape_getSize(block->rectangleShape);
-        blockAngle = u_degrees_to_rad(sfRectangleShape_getRotation(block->rectangleShape));
+        blockAngle =  u_real_angle(sfRectangleShape_getRotation(block->rectangleShape));
+        blockPosTopLeftOrigin = u_rotate_around_point((sfVector2f) {
+            blockPos.x - (blockSize.x / 2.f),
+            blockPos.y - (blockSize.y / 2.f)}, blockPos, blockAngle);
 
         circlePos = sfCircleShape_getPosition(ball->circleShape);
         circleRadius = sfCircleShape_getRadius(ball->circleShape);
@@ -124,26 +127,43 @@ void p_check_block_collisions(ball_t* ball) {
         unrotatedCirclePos.x = cosf(blockAngle) * (circlePos.x - blockPos.x) -
                 sinf(blockAngle) * (circlePos.y - blockPos.y) + blockPos.x;
         unrotatedCirclePos.y = sinf(blockAngle) * (circlePos.x - blockPos.x) -
-                cosf(blockAngle) * (circlePos.y - blockPos.y) + blockPos.y;
+                (sinf(blockAngle) == 0.f ? -1.f : 1.f) * cosf(blockAngle) * (circlePos.y - blockPos.y) + blockPos.y;
+
+//        printf("(%.3lf,%.3lf) (%.3lf,%.3lf)\n", circlePos.x, circlePos.y, unrotatedCirclePos.x, unrotatedCirclePos.y);
 
         // Calculate point on block closest to ball
-        if (unrotatedCirclePos.x < blockPos.x)
-            closestPos.x = blockPos.x;
-        else if (unrotatedCirclePos.x > blockPos.x + blockSize.x)
-            closestPos.x = blockPos.x + blockSize.x;
+        if (unrotatedCirclePos.x < blockPosTopLeftOrigin.x)
+            closestPos.x = blockPosTopLeftOrigin.x;
+        else if (unrotatedCirclePos.x > blockPosTopLeftOrigin.x + blockSize.x)
+            closestPos.x = blockPosTopLeftOrigin.x + blockSize.x;
         else
             closestPos.x = unrotatedCirclePos.x;
 
-        if (unrotatedCirclePos.y < blockPos.y)
-            closestPos.y = blockPos.y;
-        else if (unrotatedCirclePos.y > blockPos.y + blockSize.y)
-            closestPos.y = blockPos.y + blockSize.y;
+        if (unrotatedCirclePos.y < blockPosTopLeftOrigin.y)
+            closestPos.y = blockPosTopLeftOrigin.y;
+        else if (unrotatedCirclePos.y > blockPosTopLeftOrigin.y + blockSize.y)
+            closestPos.y = blockPosTopLeftOrigin.y + blockSize.y;
         else
             closestPos.y = unrotatedCirclePos.y;
 
-        if (p_distance_squared_ball_block(ball, block) < circleRadius * circleRadius) {
+        float distSquared = u_distance_squared(unrotatedCirclePos, closestPos);
+//        printf("%.3lf (%.3lf,%.3lf) (%.3lf,%.3lf)\n", sqrtf(distSquared), circlePos.x, circlePos.y, closestPos.x, closestPos.y);
+        if (distSquared < circleRadius * circleRadius) {
             // Collision
             // TODO: Bounce ball based on rectangle angle/collision side. Probably use closestPos to determine side.
+            // angle between circlePos and closestPos
+            float angle = atan2f(fabsf(closestPos.y - circlePos.y), fabsf(closestPos.x - circlePos.x));
+            float iptr;
+            float angle_flipped = modff(angle + (float) M_PI, &iptr) + iptr;
+
+            float moveDist = (circleRadius - sqrtf(distSquared));
+            sfCircleShape_move(ball->circleShape, (sfVector2f) {moveDist * cosf(angle_flipped), moveDist * sinf(angle_flipped)});
+
+            p_ball_bounce(ball, (sfVector2f) {cosf(angle_flipped), sinf(angle_flipped)});
+
+
+            printf("%.3lf\n", angle);
+
         }
 
         node = node->next;
@@ -164,7 +184,7 @@ void p_update_balls(const float* delta) {
 
         p_check_borders(ball);
         p_check_ball_collisions(ball);
-        p_check_block_collisions(ball);
+//        p_check_block_collisions(ball);
 
         sfCircleShape_move(ball->circleShape, u_vector2f_float_mult(ball->vel, *delta));
         ball->vel = u_vector2f_add(ball->vel, u_vector2f_float_mult(gravity, *delta));
@@ -217,6 +237,56 @@ void p_ball_destroy(ball_t* ball) {
 }
 
 /*
+ * Return pointer to object at position or NULL
+ * Parameter type is set to object type
+ */
+
+void* p_get_object_at_pos(sfVector2i pos, pObject* type) {
+    sfVector2f posf = u_vector2i_to_f(pos);
+
+    // Check blocks
+    node_t* node = p_blocks->head;
+    while(node) {
+        block_t *block = (block_t *) node->val;
+        float blockAngle = sfRectangleShape_getRotation(block->rectangleShape);
+        sfRectangleShape_setRotation(block->rectangleShape, 0);
+
+        sfVector2f blockPos = sfRectangleShape_getPosition(block->rectangleShape);
+        sfVector2f blockSize = sfRectangleShape_getSize(block->rectangleShape);
+        sfVector2f unrotatedPos = u_rotate_around_point(posf, blockPos, u_degrees_to_rad(-blockAngle));
+
+        if (unrotatedPos.x > blockPos.x - blockSize.x / 2 && unrotatedPos.x < blockPos.x + blockSize.x / 2
+            && unrotatedPos.y > blockPos.y - blockSize.y / 2 && unrotatedPos.y < blockPos.y + blockSize.y / 2) {
+            sfRectangleShape_setRotation(block->rectangleShape, blockAngle);
+            *type = OBJECT_BLOCK;
+            return node->val;
+        }
+
+        sfRectangleShape_setRotation(block->rectangleShape, blockAngle);
+        node = node->next;;
+    }
+
+    // Check balls
+    node = p_balls->head;
+    while(node) {
+        ball_t *ball = (ball_t *) node->val;
+        sfVector2f ballPos = sfCircleShape_getPosition(ball->circleShape);
+        float radius = sfCircleShape_getRadius(ball->circleShape);
+        float distSquared = u_distance_squared(posf, ballPos);
+
+        if (distSquared < radius * radius) {
+            *type = OBJECT_BALL;
+            return node->val;
+        }
+
+        node = node->next;
+    }
+
+    *type = OBJECT_NONE;
+    return NULL;
+}
+
+/*
  * Adjust balls velocity to "bounce" in given direction
  */
 
@@ -266,13 +336,4 @@ void p_block_destroy(block_t* block) {
 float p_distance_squared_ball(ball_t* ball, ball_t* ball2) {
     return u_distance_squared(sfCircleShape_getPosition(ball->circleShape),
                               sfCircleShape_getPosition(ball2->circleShape));;
-}
-
-/*
- * Wrapper function to return distance between a ball and block
- */
-
-float p_distance_squared_ball_block(ball_t* ball, block_t* block) {
-    return u_distance_squared(sfCircleShape_getPosition(ball->circleShape),
-                              sfRectangleShape_getPosition(block->rectangleShape));
 }

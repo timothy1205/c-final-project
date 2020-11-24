@@ -35,7 +35,17 @@ sfVector2f u_vector2f_add(sfVector2f vector1, sfVector2f vector2);
 sfVector2f u_vector2f_float_mult(sfVector2f vector, float multiplier);
 
 float u_degrees_to_rad(float deg);
+float u_rad_to_degrees(float rad);
+float u_real_angle(float deg);
+float u_flip_angle(float rad);
+sfVector2f u_rotate_around_point(sfVector2f point, sfVector2f origin, float angle);
 
 float u_distance_squared(sfVector2f from, sfVector2f to);
+
+sfVector2f u_vector2i_to_f(sfVector2i vector);
+
+float u_rand_range(float min, float max);
+
+sfColor u_rand_color(void);
 
 #endif //C_FINAL_PROJECT_UTILS_H

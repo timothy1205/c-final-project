@@ -35,6 +35,6 @@ void r_render_blocks(sfRenderWindow* window) {
  */
 
 void r_render(sfRenderWindow* window) {
-    r_render_balls(window);
     r_render_blocks(window);
+    r_render_balls(window);
 }

@@ -3,14 +3,14 @@ project(c-final-project C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(${CMAKE_PROJECT_NAME} main.c physics.c physics.h utils.c utils.h render.c render.h constants.h)
+add_executable(${CMAKE_PROJECT_NAME} main.c physics.c physics.h utils.c utils.h render.c render.h constants.h ui.c ui.h)
 
 if (WIN32)
     message("Windows is not supported...")
     return()
 else()
     find_package(SFML 2.5 REQUIRED system window graphics network audio)
-    target_link_libraries(${CMAKE_PROJECT_NAME} csfml-graphics csfml-system m)
+    target_link_libraries(${CMAKE_PROJECT_NAME} csfml-graphics csfml-system csfml-window m)
 endif()
 
 # we don't want to copy if we're building in the source dir

@@ -165,6 +165,62 @@ float u_degrees_to_rad(float deg) {
 }
 
 /*
+ * Convert radians to degrees
+ */
+
+float u_rad_to_degrees(float rad) {
+    return rad * 180.f / (float) M_PI;
+}
+
+/*
+ * Get the "real" angle (in radians) from SFML degrees
+ * SFML defines it's rotation as clockwise degrees
+ */
+
+float u_real_angle(float deg) {
+    return u_degrees_to_rad(deg);
+}
+
+/*
+ * Flip an angle (in radians) by adding PI (180 deg)
+ */
+
+float u_flip_angle(float rad) {
+    float iptr;
+    return modff(rad + (float) M_PI, &iptr) + iptr;
+}
+
+/*
+ * Rotate from point by angle around origin
+ */
+
+sfVector2f u_rotate_around_point(sfVector2f point, sfVector2f origin, float angle) {
+    float cosAngle = cosf(angle);
+    float sinAngle = sinf(angle);
+
+//    // Translate to origin
+//    point.x -= origin.x;
+//    point.y -= origin.y;
+//
+//    // Rotate
+//    float xRotated = point.x * cosAngle + point.y * sinAngle;
+//    float yRotated = point.x * sinAngle + point.y * cosAngle;
+//
+//    // Translate back
+//    point.x = xRotated + origin.x;
+//    point.y = yRotated + origin.y;
+//
+//    return point;
+
+    float xRotated = cosAngle * (point.x - origin.x) -
+            sinAngle * (point.y - origin.y) + origin.x;
+    float yRotated = sinAngle * (point.x - origin.x) +
+            cosAngle * (point.y - origin.y) + origin.y;
+
+    return (sfVector2f) {xRotated, yRotated};
+}
+
+/*
  * Return distance between two points
  */
 
@@ -173,4 +229,22 @@ float u_distance_squared(sfVector2f from, sfVector2f to) {
     float y = fabsf(from.y - to.y);
 
     return (x * x) + (y * y);
+}
+
+/*
+ * Convert sfVector2i to sfVector2f
+ */
+
+sfVector2f u_vector2i_to_f(sfVector2i vector) {
+    sfVector2f vectorf = {(float) vector.x, (float) vector.y};
+
+    return vectorf;
+}
+
+float u_rand_range(float min, float max) {
+    return (float) rand() / (float) RAND_MAX * (max - min) + min;
+}
+
+sfColor u_rand_color(void) {
+    return sfColor_fromRGB(rand() % 255, rand() % 255, rand() % 255);
 }
