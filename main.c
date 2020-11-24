@@ -62,7 +62,7 @@ void HandleInput(sfRenderWindow* window, sfEvent event) {
         if (event.mouseButton.button == sfMouseLeft) {
             // Check if clicking on an object or the void
             pObject type;
-            void* object = p_get_object_at_pos(sfMouse_getPositionRenderWindow(window), &type);
+            void *object = p_get_object_at_pos(sfMouse_getPositionRenderWindow(window), &type);
             switch (type) {
                 case OBJECT_BALL:
                     // Fling ball
@@ -95,7 +95,7 @@ void HandleInput(sfRenderWindow* window, sfEvent event) {
             }
         } else if (event.mouseButton.button == sfMouseRight) {
             pObject type;
-            void* object = p_get_object_at_pos(sfMouse_getPositionRenderWindow(window), &type);
+            void *object = p_get_object_at_pos(sfMouse_getPositionRenderWindow(window), &type);
             if (type == OBJECT_BLOCK) {
                 printf("Rotating block...\n");
                 ui_switch_state(STATE_BLOCK_ROTATE, object);
@@ -135,4 +135,4 @@ void HandleInput(sfRenderWindow* window, sfEvent event) {
             }
         }
     }
-
+}
