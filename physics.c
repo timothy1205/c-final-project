@@ -232,8 +232,11 @@ ball_t* p_ball_create(float radius, sfVector2f pos, sfVector2f vel, float energy
  */
 
 void p_ball_destroy(ball_t* ball) {
+    sfCircleShape_destroy(ball->circleShape);
+
     node_t* node = u_list_find(p_balls, ball);
     if (node) u_list_remove(p_balls, node);
+
 }
 
 /*
@@ -325,8 +328,11 @@ block_t* p_block_create(float angle, sfVector2f size,  sfVector2f pos, sfColor c
  */
 
 void p_block_destroy(block_t* block) {
+    sfRectangleShape_destroy(block->rectangleShape);
+
     node_t* node = u_list_find(p_blocks, block);
-    if (node) u_list_remove(p_balls, node);
+    if (node) u_list_remove(p_blocks, node);
+
 }
 
 /*

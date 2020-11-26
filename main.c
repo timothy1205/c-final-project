@@ -133,6 +133,16 @@ void HandleInput(sfRenderWindow* window, sfEvent event) {
                 // Set Spawner to balls
                 ui_set_spawn_type(OBJECT_BALL);
             }
+        } else if (event.key.code == sfKeyD) {
+            pObject type;
+            void *object = p_get_object_at_pos(sfMouse_getPositionRenderWindow(window), &type);
+            if (type == OBJECT_BLOCK) {
+                printf("Destroying block...\n");
+                p_block_destroy((block_t*) (object));
+            } else if (type == OBJECT_BALL) {
+                printf("Destroying ball...\n");
+                p_ball_destroy((ball_t*) (object));
+            }
         }
     }
 }

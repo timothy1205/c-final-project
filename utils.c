@@ -130,6 +130,7 @@ node_t* u_node_create(void* val) {
 
 void u_node_destroy(node_t* node) {
     free(node->val);
+    node->val = NULL;
     free(node);
 }
 
