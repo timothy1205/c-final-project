@@ -31,6 +31,13 @@ void ui_update(void) {
 }
 
 void ui_switch_state(UIState state, void* object) {
+    // Handle old state first
+    if (s_uiData.state == STATE_BALL_FLING) {
+        ball_t* ball = ((ball_t*) s_uiData.object);
+        // Halve our velocity so a small drag isn't so powerful
+        ball->vel = u_vector2f_float_mult(ui_get_relative_mouse_pos(), 0.5f);
+    }
+
     s_uiData.state = state;
     s_uiData.object = object;
 

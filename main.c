@@ -21,6 +21,7 @@ int main() {
     sfRenderWindow* window = sfRenderWindow_create((sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT}, "c-final-project",  sfDefaultStyle, NULL);
 
     p_initialize();
+    ui_initialize(window);
 
     sfClock* clock = sfClock_create();
     sfText* fps = sfText_create();
