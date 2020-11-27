@@ -42,10 +42,8 @@ int main() {
 
         sfEvent event;
         while (sfRenderWindow_pollEvent(window, &event)) {
-            if (event.type == sfEvtClosed)
+            if (event.type == sfEvtClosed) {
                 sfRenderWindow_close(window);
-            else if (event.type == sfEvtResized) {
-                // TODO: Is this even needed?
             }
 
             HandleInput(window, event);
