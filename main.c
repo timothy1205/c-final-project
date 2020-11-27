@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #include <SFML/Graphics.h>
 #include <SFML/Window.h>
@@ -7,7 +8,10 @@
 #include "render.h"
 #include "ui.h"
 
+void readTitle(char* title, int size);
 void HandleInput(sfRenderWindow* window, sfEvent event);
+
+sfBool shouldClose = sfFalse;
 
 int main() {
     srand(time(NULL));
@@ -18,7 +22,11 @@ int main() {
         u_resource_failure();
     }
 
-    sfRenderWindow* window = sfRenderWindow_create((sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT}, "c-final-project",  sfDefaultStyle, NULL);
+    char title[100];
+    readTitle(title, 50);
+    printf("Title: %s\n", title + 1);
+
+    sfRenderWindow* window = sfRenderWindow_create((sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT}, title + 1,  sfDefaultStyle, NULL);
 
     p_initialize();
     ui_initialize(window);
@@ -43,6 +51,10 @@ int main() {
             HandleInput(window, event);
         }
 
+        if (shouldClose) {
+            break;
+        }
+
         sprintf(fps_str, "FPS: %.0lf", 1/deltaSeconds);
         sfText_setString(fps, fps_str);
 
@@ -54,7 +66,38 @@ int main() {
         sfRenderWindow_drawText(window, fps, NULL);
         sfRenderWindow_display(window);
     }
+
+    u_free_resources();
+    FILE* fp = fopen("output.txt", "a");
+    if (fp != NULL) {
+        fputs("Application closed with no errors...\n", fp);
+    }
+    fclose(fp);
+
     return 0;
+}
+
+void readTitle(char* title, int size) {
+    FILE* fp = fopen("./resources/config.txt", "r");
+    if (fp == NULL) {
+        fprintf(stderr, "Failed to open config...\n");
+        u_free_resources();
+        exit(1);
+    }
+
+    char name[size];
+    char version[size];
+
+    if (fgets(name, size, fp) != NULL) {
+        name[strlen(name) - 1] = '\0'; // Remove new line
+        strcat(title, name);
+        strcat(title, "-");
+    }
+    if (fgets(version, size, fp) != NULL) {
+        strcat(title, version);
+    }
+
+    fclose(fp);
 }
 
 void HandleInput(sfRenderWindow* window, sfEvent event) {
@@ -143,6 +186,9 @@ void HandleInput(sfRenderWindow* window, sfEvent event) {
                 printf("Destroying ball...\n");
                 p_ball_destroy((ball_t*) (object));
             }
+        } else if (event.key.code == sfKeyEscape) {
+            // Close application
+            shouldClose = sfTrue;
         }
     }
 }
