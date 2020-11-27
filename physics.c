@@ -98,72 +98,51 @@ void p_check_ball_collisions(ball_t* ball) {
  */
 
 void p_check_block_collisions(ball_t* ball) {
-    sfVector2f blockPos;
-    sfVector2f blockPosTopLeftOrigin;
-    sfVector2f blockSize;
-    float blockAngle;
-
-    sfVector2f circlePos;
-    float circleRadius;
-    sfVector2f unrotatedCirclePos;
     sfVector2f closestPos;
 
     node_t* node = p_blocks->head;
 
     while(node) {
         block_t* block = (block_t*) node->val;
-        blockPos = sfRectangleShape_getPosition(block->rectangleShape);
-        blockSize = sfRectangleShape_getSize(block->rectangleShape);
-        blockAngle =  u_real_angle(sfRectangleShape_getRotation(block->rectangleShape));
-        blockPosTopLeftOrigin = u_rotate_around_point((sfVector2f) {
-            blockPos.x - (blockSize.x / 2.f),
-            blockPos.y - (blockSize.y / 2.f)}, blockPos, blockAngle);
+        sfVector2f blockPos = sfRectangleShape_getPosition(block->rectangleShape);
+        sfVector2f blockSize = sfRectangleShape_getSize(block->rectangleShape);
+        float blockAngle =  sfRectangleShape_getRotation(block->rectangleShape);
 
-        circlePos = sfCircleShape_getPosition(ball->circleShape);
-        circleRadius = sfCircleShape_getRadius(ball->circleShape);
+
+        sfVector2f circlePos = sfCircleShape_getPosition(ball->circleShape);
+        float circleRadius = sfCircleShape_getRadius(ball->circleShape);
 
         // http://www.migapro.com/circle-and-rotated-rectangle-collision-detection/
         // Circle rotated around block's center by block's angle
-        unrotatedCirclePos.x = cosf(blockAngle) * (circlePos.x - blockPos.x) -
-                sinf(blockAngle) * (circlePos.y - blockPos.y) + blockPos.x;
-        unrotatedCirclePos.y = sinf(blockAngle) * (circlePos.x - blockPos.x) -
-                (sinf(blockAngle) == 0.f ? -1.f : 1.f) * cosf(blockAngle) * (circlePos.y - blockPos.y) + blockPos.y;
-
-//        printf("(%.3lf,%.3lf) (%.3lf,%.3lf)\n", circlePos.x, circlePos.y, unrotatedCirclePos.x, unrotatedCirclePos.y);
+        sfVector2f unrotatedCirclePos = u_rotate_around_point(circlePos, blockPos, u_degrees_to_rad(-blockAngle));
 
         // Calculate point on block closest to ball
-        if (unrotatedCirclePos.x < blockPosTopLeftOrigin.x)
-            closestPos.x = blockPosTopLeftOrigin.x;
-        else if (unrotatedCirclePos.x > blockPosTopLeftOrigin.x + blockSize.x)
-            closestPos.x = blockPosTopLeftOrigin.x + blockSize.x;
+        if (unrotatedCirclePos.x < blockPos.x - blockSize.x / 2)
+            closestPos.x = blockPos.x - blockSize.x / 2;
+        else if (unrotatedCirclePos.x > blockPos.x + blockSize.x / 2)
+            closestPos.x = blockPos.x + blockSize.x / 2;
         else
             closestPos.x = unrotatedCirclePos.x;
 
-        if (unrotatedCirclePos.y < blockPosTopLeftOrigin.y)
-            closestPos.y = blockPosTopLeftOrigin.y;
-        else if (unrotatedCirclePos.y > blockPosTopLeftOrigin.y + blockSize.y)
-            closestPos.y = blockPosTopLeftOrigin.y + blockSize.y;
+        if (unrotatedCirclePos.y < blockPos.y - blockSize.y / 2)
+            closestPos.y = blockPos.y - blockSize.y / 2;
+        else if (unrotatedCirclePos.y > blockPos.y + blockSize.y / 2)
+            closestPos.y = blockPos.y + blockSize.y / 2;
         else
             closestPos.y = unrotatedCirclePos.y;
 
         float distSquared = u_distance_squared(unrotatedCirclePos, closestPos);
-//        printf("%.3lf (%.3lf,%.3lf) (%.3lf,%.3lf)\n", sqrtf(distSquared), circlePos.x, circlePos.y, closestPos.x, closestPos.y);
         if (distSquared < circleRadius * circleRadius) {
             // Collision
-            // TODO: Bounce ball based on rectangle angle/collision side. Probably use closestPos to determine side.
-            // angle between circlePos and closestPos
-            float angle = atan2f(fabsf(closestPos.y - circlePos.y), fabsf(closestPos.x - circlePos.x));
+            // Rotate our closestPos to match block's angle
+            sfVector2f rotatedClosestPos = u_rotate_around_point(closestPos, blockPos, u_degrees_to_rad(blockAngle));
+            float angle = atan2f(rotatedClosestPos.y - circlePos.y, rotatedClosestPos.x - circlePos.x);
             float iptr;
             float angle_flipped = modff(angle + (float) M_PI, &iptr) + iptr;
 
             float moveDist = (circleRadius - sqrtf(distSquared));
             sfCircleShape_move(ball->circleShape, (sfVector2f) {moveDist * cosf(angle_flipped), moveDist * sinf(angle_flipped)});
-
-            p_ball_bounce(ball, (sfVector2f) {cosf(angle_flipped), sinf(angle_flipped)});
-
-
-            printf("%.3lf\n", angle);
-
+            p_ball_bounce_magnitude(ball, (sfVector2f) {cosf(angle_flipped), sinf(angle_flipped)});
         }
 
         node = node->next;
@@ -184,7 +163,7 @@ void p_update_balls(const float* delta) {
 
         p_check_borders(ball);
         p_check_ball_collisions(ball);
-//        p_check_block_collisions(ball);
+        p_check_block_collisions(ball);
 
         sfCircleShape_move(ball->circleShape, u_vector2f_float_mult(ball->vel, *delta));
         ball->vel = u_vector2f_add(ball->vel, u_vector2f_float_mult(gravity, *delta));
@@ -299,6 +278,19 @@ void p_ball_bounce(ball_t* ball, sfVector2f direction) {
     if (direction.y != 0)
         ball->vel.y *= direction.y * ball->energyConserved;
 }
+
+/*
+ * Incorporate overall velocity magnitude (combined components) into final
+ * bounce velocity
+ */
+
+void p_ball_bounce_magnitude(ball_t* ball, sfVector2f direction) {
+    float magnitude = sqrtf(ball->vel.x * ball->vel.x + ball->vel.y * ball->vel.y);
+
+    ball->vel.x = magnitude * direction.x * ball->energyConserved;
+    ball->vel.y = magnitude * direction.y * ball->energyConserved;
+}
+
 
 /*
  *  Create and return block

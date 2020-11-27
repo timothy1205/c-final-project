@@ -51,7 +51,6 @@ int main() {
         sfRenderWindow_clear(window, sfBlack);
         p_update(&deltaSeconds);
         r_render(window);
-
         sfRenderWindow_drawText(window, fps, NULL);
         sfRenderWindow_display(window);
     }
@@ -82,7 +81,7 @@ void HandleInput(sfRenderWindow* window, sfEvent event) {
                         p_ball_create(u_rand_range(10, 30),
                                       u_vector2i_to_f(sfMouse_getPositionRenderWindow(window)),
                                       (sfVector2f) {0, 0},
-                                      u_rand_range(0, 1),
+                                      u_rand_range(0.3f, 1),
                                       u_rand_color());
                     } else {
                         p_block_create(0.f,
