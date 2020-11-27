@@ -13,7 +13,7 @@ void handleInput(sfRenderWindow* window, sfEvent event);
 
 sfBool shouldClose = sfFalse;
 
-int main(int argc, char** argv) {
+int main() {
     srand(time(NULL));
 
     // Global font that will be used for all text
@@ -27,13 +27,7 @@ int main(int argc, char** argv) {
     // title + 1 to exclude some random character showing up in the beginning
     printf("Title: %s\n", title + 1);
 
-    sfRenderWindow* window = sfRenderWindow_create(
-            (sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT},
-            title + 1,
-            /* sfFullscreen doesn't work on my 1440p monitor so if
-             any arguments are given to the program, don't go in fullscreen */
-            argc > 1 ? sfDefaultStyle : sfFullscreen,
-            NULL);
+    sfRenderWindow* window = sfRenderWindow_create((sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT}, title + 1,  sfDefaultStyle, NULL);
 
     p_initialize();
     ui_initialize(window);
