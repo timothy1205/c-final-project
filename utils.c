@@ -1,5 +1,6 @@
 #include "utils.h"
 #include "math.h"
+#include "physics.h"
 
 void u_allocate_failure(void) {
     fprintf(stderr, "Failed to allocate space, quitting...\n");
@@ -18,7 +19,7 @@ void u_resource_failure(void) {
 }
 
 void u_free_resources(void) {
-    // TODO: Free everything, probably split into sub-functions in other files
+    p_free_resources();
 }
 
 /*

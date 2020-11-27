@@ -29,6 +29,7 @@ extern list_t* p_blocks;
 
 void p_initialize(void);
 void p_update(float* delta);
+void p_free_resources(void);
 
 ball_t* p_ball_create(float radius, sfVector2f pos, sfVector2f vel, float energyConserved, sfColor col);
 void p_ball_destroy(ball_t* ball);

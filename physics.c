@@ -181,6 +181,31 @@ void p_update(float* delta) {
 }
 
 /*
+ * Delete saved physics objects
+ */
+
+void p_free_resources(void) {
+    node_t* node = p_balls->head;
+
+    while(node) {
+        p_ball_destroy((ball_t*) node->val);
+
+        node = node->next;
+    }
+    u_list_destroy(p_balls);
+
+    node = p_blocks->head;
+
+    while(node) {
+        p_block_destroy((block_t*) node->val);
+
+        node = node->next;
+    }
+    u_list_destroy(p_blocks);
+}
+
+
+/*
  * Create and return a ball
  */
 
