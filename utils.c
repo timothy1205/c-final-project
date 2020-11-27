@@ -2,6 +2,10 @@
 #include "math.h"
 #include "physics.h"
 
+/*
+ * Indicate a failure to allocate memory and force the application to exit
+ */
+
 void u_allocate_failure(void) {
     fprintf(stderr, "Failed to allocate space, quitting...\n");
     u_free_resources();
@@ -17,6 +21,10 @@ void u_resource_failure(void) {
     u_free_resources();
     exit(1);
 }
+
+/*
+ * Free all application resources
+ */
 
 void u_free_resources(void) {
     p_free_resources();
@@ -104,6 +112,10 @@ void u_list_remove(list_t* list, node_t* node) {
     list->size--;
 }
 
+/*
+ * Search for a node with a value pointing to given pointer's address
+ */
+
 node_t* u_list_find(list_t* list, void* val) {
     node_t* node = list->head;
     while (node) {
@@ -114,6 +126,9 @@ node_t* u_list_find(list_t* list, void* val) {
     return NULL;
 }
 
+/*
+ * Create and return a new node
+ */
 
 node_t* u_node_create(void* val) {
     node_t* node = malloc(sizeof(node_t));
@@ -129,9 +144,14 @@ node_t* u_node_create(void* val) {
     return node;
 }
 
+/*
+ * Destroy and free a node's memory
+ * Also try to free the node's value
+ */
+
 void u_node_destroy(node_t* node) {
     free(node->val);
-    node->val = NULL;
+    node->val = NULL; // Probably not really needed, but just in case
     free(node);
 }
 
@@ -200,20 +220,6 @@ sfVector2f u_rotate_around_point(sfVector2f point, sfVector2f origin, float angl
     float cosAngle = cosf(angle);
     float sinAngle = sinf(angle);
 
-//    // Translate to origin
-//    point.x -= origin.x;
-//    point.y -= origin.y;
-//
-//    // Rotate
-//    float xRotated = point.x * cosAngle + point.y * sinAngle;
-//    float yRotated = point.x * sinAngle + point.y * cosAngle;
-//
-//    // Translate back
-//    point.x = xRotated + origin.x;
-//    point.y = yRotated + origin.y;
-//
-//    return point;
-
     float xRotated = cosAngle * (point.x - origin.x) -
             sinAngle * (point.y - origin.y) + origin.x;
     float yRotated = sinAngle * (point.x - origin.x) +
@@ -243,9 +249,17 @@ sfVector2f u_vector2i_to_f(sfVector2i vector) {
     return vectorf;
 }
 
+/*
+ * Return a random float between min/max bounds
+ */
+
 float u_rand_range(float min, float max) {
     return (float) rand() / (float) RAND_MAX * (max - min) + min;
 }
+
+/*
+ * Return a random RGB color
+ */
 
 sfColor u_rand_color(void) {
     return sfColor_fromRGB(rand() % 255, rand() % 255, rand() % 255);

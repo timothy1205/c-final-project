@@ -9,7 +9,7 @@
 #include "ui.h"
 
 void readTitle(char* title, int size);
-void HandleInput(sfRenderWindow* window, sfEvent event);
+void handleInput(sfRenderWindow* window, sfEvent event);
 
 sfBool shouldClose = sfFalse;
 
@@ -24,6 +24,7 @@ int main() {
 
     char title[100];
     readTitle(title, 50);
+    // title + 1 to exclude some random character showing up in the beginning
     printf("Title: %s\n", title + 1);
 
     sfRenderWindow* window = sfRenderWindow_create((sfVideoMode){(unsigned int) WIDTH, (unsigned int) HEIGHT}, title + 1,  sfDefaultStyle, NULL);
@@ -37,6 +38,7 @@ int main() {
     sfText_setCharacterSize(fps, 20);
     char fps_str[50];
     while(sfRenderWindow_isOpen(window)) {
+        // Delta time represents the time between each frame render
         sfTime delta = sfClock_restart(clock);
         float deltaSeconds = sfTime_asSeconds(delta) * p_time_multiplier;
 
@@ -46,10 +48,11 @@ int main() {
                 sfRenderWindow_close(window);
             }
 
-            HandleInput(window, event);
+            handleInput(window, event);
         }
 
         if (shouldClose) {
+            // Forcefully exit application loop
             break;
         }
 
@@ -65,6 +68,9 @@ int main() {
         sfRenderWindow_display(window);
     }
 
+    // If we exited them main loop (without exit() being called) we can assume we are closing
+    // gracefully, report it.
+
     u_free_resources();
     FILE* fp = fopen("output.txt", "a");
     if (fp != NULL) {
@@ -74,6 +80,10 @@ int main() {
 
     return 0;
 }
+
+/*
+ * Read application title/version from config file
+ */
 
 void readTitle(char* title, int size) {
     FILE* fp = fopen("./resources/config.txt", "r");
@@ -98,7 +108,11 @@ void readTitle(char* title, int size) {
     fclose(fp);
 }
 
-void HandleInput(sfRenderWindow* window, sfEvent event) {
+/*
+ * Decide what actions to perform for key presses/mouse clicks
+ */
+
+void handleInput(sfRenderWindow* window, sfEvent event) {
     if (event.type == sfEvtMouseButtonPressed) {
         if (event.mouseButton.button == sfMouseLeft) {
             // Check if clicking on an object or the void

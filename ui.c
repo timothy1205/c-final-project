@@ -1,11 +1,20 @@
 #include <math.h>
 #include "ui.h"
 
+/*
+ * Initialize some defaults for our UI data
+ */
+
 void ui_initialize(sfRenderWindow* window) {
     s_uiData.window = window;
     s_uiData.state = STATE_WAITING;
     s_uiData.spawnType = OBJECT_BALL; // Default spawn type
 }
+
+/*
+ * Update the world/ui data (or not) depending on
+ * our current state
+ */
 
 void ui_update(void) {
     float angle;
@@ -29,6 +38,11 @@ void ui_update(void) {
             break;
     }
 }
+
+/*
+ * Switch to a new state, setup the data needed for said state,
+ * and do anything that is necessary to transition from a specific state
+ */
 
 void ui_switch_state(UIState state, void* object) {
     // Handle old state first
@@ -61,17 +75,33 @@ void ui_switch_state(UIState state, void* object) {
     }
 }
 
+/*
+ * Return UI state
+ */
+
 UIState ui_get_state(void) {
     return s_uiData.state;
 }
+
+/*
+ * Set object spawn type
+ */
 
 void ui_set_spawn_type(pObject spawnType) {
     s_uiData.spawnType = spawnType;
 }
 
+/*
+ * Return current object spawn type
+ */
+
 pObject ui_get_spawn_type(void) {
     return s_uiData.spawnType;
 }
+
+/*
+ * Return the mouse position relative to the stored oldMousePos
+ */
 
 sfVector2f ui_get_relative_mouse_pos(void) {
     sfVector2f mousePos = u_vector2i_to_f(sfMouse_getPositionRenderWindow(s_uiData.window));
@@ -80,6 +110,10 @@ sfVector2f ui_get_relative_mouse_pos(void) {
 
     return mousePos;
 }
+
+/*
+ * Return the angle between the mouse position and the stored oldMousePos
+ */
 
 float ui_get_relative_mouse_angle(void) {
     sfVector2i mousePos = sfMouse_getPositionRenderWindow(s_uiData.window);
